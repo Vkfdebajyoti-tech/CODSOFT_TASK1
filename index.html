@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobConnect - Find & Post Jobs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">JobConnect</div>
+        <div class="nav-links">
+            <a href="#" onclick="showPage('home-page')">Home</a>
+            <a href="#" onclick="showPage('jobs-page')">Jobs</a>
+            <a href="#" onclick="showPage('candidate-dashboard')">Candidate Dashboard</a>
+            <a href="#" onclick="showPage('employer-dashboard')">Employer Dashboard</a>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <section id="home-page" class="page">
+        <div class="hero">
+            <h1>Find Your Dream Job Today</h1>
+            <p>Connect with top companies and explore thousands of opportunities.</p>
+            <div class="search-box">
+                <input type="text" id="home-search-input" placeholder="Job title, skills, or company...">
+                <button onclick="searchJobsFromHome()">Search Jobs</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2>Featured Job Listings</h2>
+            <div id="featured-jobs" class="job-grid"></div>
+        </div>
+    </section>
+
+    <!-- Job Listings Page -->
+    <section id="jobs-page" class="page hidden">
+        <div class="container">
+            <h2>All Job Openings</h2>
+            <div class="filter-box">
+                <input type="text" id="job-search-input" onkeyup="filterJobs()" placeholder="Search by title, company, or location...">
+            </div>
+            <div id="all-jobs" class="job-grid"></div>
+        </div>
+    </section>
+
+    <!-- Job Detail Page & Application Modal -->
+    <section id="job-detail-page" class="page hidden">
+        <div class="container">
+            <button class="back-btn" onclick="showPage('jobs-page')">&larr; Back to Jobs</button>
+            <div id="job-detail-content" class="detail-card"></div>
+
+            <!-- Application Form -->
+            <div class="apply-box">
+                <h3>Apply for this Position</h3>
+                <form id="apply-form" onsubmit="submitApplication(event)">
+                    <input type="text" id="applicant-name" placeholder="Full Name" required>
+                    <input type="email" id="applicant-email" placeholder="Email Address" required>
+                    <label style="display:block; text-align:left; margin-top:10px; font-weight:bold;">Upload Resume (PDF/Doc):</label>
+                    <input type="file" id="applicant-resume" accept=".pdf,.doc,.docx" required>
+                    <button type="submit" class="btn-submit">Submit Application</button>
+                </form>
+                <p id="app-msg" class="success-msg"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Candidate Dashboard -->
+    <section id="candidate-dashboard" class="page hidden">
+        <div class="container">
+            <h2>Candidate Dashboard</h2>
+            <div class="dashboard-card">
+                <h3>My Applications</h3>
+                <div id="applied-jobs-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Employer Dashboard -->
+    <section id="employer-dashboard" class="page hidden">
+        <div class="container">
+            <h2>Employer Dashboard</h2>
+            
+            <div class="dashboard-card">
+                <h3>Post a New Job</h3>
+                <form id="post-job-form" onsubmit="createNewJob(event)">
+                    <input type="text" id="job-title" placeholder="Job Title (e.g. Frontend Developer)" required>
+                    <input type="text" id="job-company" placeholder="Company Name" required>
+                    <input type="text" id="job-location" placeholder="Location (e.g. Remote, Kolkata)" required>
+                    <input type="text" id="job-salary" placeholder="Salary Range (e.g. $60,000/yr)" required>
+                    <textarea id="job-desc" placeholder="Detailed Job Description" rows="4" required></textarea>
+                    <button type="submit" class="btn-submit">Post Job</button>
+                </form>
+                <p id="post-msg" class="success-msg"></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
