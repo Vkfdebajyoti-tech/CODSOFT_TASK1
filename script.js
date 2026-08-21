@@ -1,90 +1,81 @@
 let defaultJobs = [
-    {
-        id: 1,
-        title: "Frontend Web Developer",
-        company: "TechCorp Solutions",
-        location: "Remote",
-        salary: "$70,000 - $85,000 / year",
-        desc: "We are looking for a skilled HTML/CSS/JavaScript developer to build responsive web interfaces."
-    },
-    {
-        id: 2,
-        title: "UI/UX Designer",
-        company: "Creative Studio",
-        location: "Kolkata, India",
-        salary: "₹5,00,000 - ₹8,00,000 / year",
-        desc: "Design clean user interfaces and enhance user experience across web platforms."
-    },
-    {
-        id: 3,
-        title: "Full Stack Engineer",
-        company: "InnovateX",
-        location: "Hybrid",
-        salary: "$90,000 / year",
-        desc: "Handle both frontend UI and backend API integrations efficiently."
-    },
-    {
-        id: 4,
-        title: "Data Analyst",
-        company: "DataWiz Inc.",
-        location: "Bengaluru, India",
-        salary: "₹6,00,000 - ₹9,00,000 / year",
-        desc: "Analyze complex datasets and build dashboards using Python, SQL, and Tableau."
-    },
-    {
-        id: 5,
-        title: "Backend Developer (Node.js)",
-        company: "CloudSync",
-        location: "Remote",
-        salary: "$80,000 - $100,000 / year",
-        desc: "Design and implement scalable backend APIs and microservices using Node.js and MongoDB."
-    },
-    {
-        id: 6,
-        title: "Machine Learning Engineer",
-        company: "AI Dynamics",
-        location: "Hyderabad, India",
-        salary: "₹12,00,000 - ₹15,00,000 / year",
-        desc: "Develop and deploy machine learning models for predictive analytics and NLP tasks."
-    },
-    {
-        id: 7,
-        title: "DevOps Engineer",
-        company: "SecureNet",
-        location: "Mumbai, India",
-        salary: "₹9,00,000 - ₹12,00,000 / year",
-        desc: "Manage cloud infrastructure, CI/CD pipelines, and ensure system reliability and security."
-    },
-    {
-        id: 8,
-        title: "Mobile App Developer",
-        company: "AppMakers",
-        location: "Pune, India",
-        salary: "₹7,00,000 - ₹10,00,000 / year",
-        desc: "Build cross-platform mobile applications using Flutter and Dart."
-    },
-    {
-        id: 9,
-        title: "Product Manager",
-        company: "Visionary Tech",
-        location: "Remote",
-        salary: "$100,000 - $120,000 / year",
-        desc: "Lead product strategy, define roadmaps, and collaborate with engineering teams."
-    },
-    {
-        id: 10,
-        title: "React Native Developer",
-        company: "NextGen Apps",
-        location: "Noida, India",
-        salary: "₹6,50,000 - ₹8,50,000 / year",
-        desc: "Develop native-like mobile applications using React Native and Redux."
-    }
+    { id: 1, title: "Frontend Web Developer", company: "TechCorp Solutions", location: "Remote", salary: "$70,000 - $85,000 / year", desc: "Build responsive web interfaces." },
+    { id: 2, title: "UI/UX Designer", company: "Creative Studio", location: "Kolkata, India", salary: "₹5,00,000 - ₹8,00,000 / year", desc: "Design clean user interfaces." },
+    { id: 3, title: "Full Stack Engineer", company: "InnovateX", location: "Hybrid", salary: "$90,000 / year", desc: "Handle frontend UI and backend API integrations." }
 ];
 
-// Changed localstorage key to load the new 10 jobs fresh
-let jobs = JSON.parse(localStorage.getItem('job_board_jobs_v2')) || defaultJobs;
-let applications = JSON.parse(localStorage.getItem('job_board_apps_v2')) || [];
+let jobs = JSON.parse(localStorage.getItem('job_board_jobs')) || defaultJobs;
+let applications = JSON.parse(localStorage.getItem('job_board_apps')) || [];
+let users = JSON.parse(localStorage.getItem('job_board_users')) || [];
+let currentUser = JSON.parse(localStorage.getItem('job_board_current_user')) || null;
+let isRegisterMode = false;
 let selectedJobId = null;
+
+function updateAuthUI() {
+    let userDisplay = document.getElementById('user-display');
+    let authBtn = document.getElementById('auth-btn');
+
+    if (currentUser) {
+        userDisplay.innerText = `Hi, ${currentUser.email.split('@')[0]}`;
+        authBtn.innerText = 'Logout';
+    } else {
+        userDisplay.innerText = '';
+        authBtn.innerText = 'Login';
+    }
+}
+
+function toggleAuth() {
+    if (currentUser) {
+        currentUser = null;
+        localStorage.removeItem('job_board_current_user');
+        updateAuthUI();
+        showPage('home-page');
+    } else {
+        switchAuthMode(false);
+        showPage('auth-page');
+    }
+}
+
+function switchAuthMode(register) {
+    isRegisterMode = register;
+    document.getElementById('auth-title').innerText = register ? "Register Account" : "Login to JobConnect";
+    document.getElementById('auth-submit-btn').innerText = register ? "Register" : "Login";
+    document.getElementById('auth-toggle-msg').innerHTML = register 
+        ? 'Already have an account? <a href="#" onclick="switchAuthMode(false)">Login here</a>'
+        : 'Don\'t have an account? <a href="#" onclick="switchAuthMode(true)">Register here</a>';
+}
+
+function handleAuth(e) {
+    e.preventDefault();
+    let email = document.getElementById('auth-email').value;
+    let pass = document.getElementById('auth-pass').value;
+
+    if (isRegisterMode) {
+        if (users.find(u => u.email === email)) {
+            alert("User already exists!");
+            return;
+        }
+        let newUser = { email, pass };
+        users.push(newUser);
+        localStorage.setItem('job_board_users', JSON.stringify(users));
+        currentUser = newUser;
+        localStorage.setItem('job_board_current_user', JSON.stringify(currentUser));
+        alert("Registration Successful!");
+    } else {
+        let user = users.find(u => u.email === email && u.pass === pass);
+        if (!user && (email !== 'admin@gmail.com' || pass !== '1234')) {
+            alert("Invalid credentials! Try email: admin@gmail.com & pass: 1234");
+            return;
+        }
+        currentUser = user || { email: 'admin@gmail.com' };
+        localStorage.setItem('job_board_current_user', JSON.stringify(currentUser));
+        alert("Login Successful!");
+    }
+
+    document.getElementById('auth-form').reset();
+    updateAuthUI();
+    showPage('home-page');
+}
 
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
@@ -98,19 +89,13 @@ function showPage(pageId) {
 function renderFeaturedJobs() {
     let container = document.getElementById('featured-jobs');
     container.innerHTML = '';
-    // Shows top 6 jobs on Home Page
-    jobs.slice(0, 6).forEach(job => {
-        container.appendChild(createJobCard(job));
-    });
+    jobs.slice(0, 3).forEach(job => container.appendChild(createJobCard(job)));
 }
 
 function renderAllJobs() {
     let container = document.getElementById('all-jobs');
     container.innerHTML = '';
-    // Shows all 10 jobs on Jobs Page
-    jobs.forEach(job => {
-        container.appendChild(createJobCard(job));
-    });
+    jobs.forEach(job => container.appendChild(createJobCard(job)));
 }
 
 function createJobCard(job) {
@@ -172,18 +157,11 @@ function submitApplication(e) {
     let email = document.getElementById('applicant-email').value;
     let job = jobs.find(j => j.id === selectedJobId);
 
-    let app = {
-        jobTitle: job.title,
-        company: job.company,
-        applicantName: name,
-        applicantEmail: email,
-        date: new Date().toLocaleDateString()
-    };
-
+    let app = { jobTitle: job.title, company: job.company, applicantName: name, applicantEmail: email, date: new Date().toLocaleDateString() };
     applications.push(app);
-    localStorage.setItem('job_board_apps_v2', JSON.stringify(applications));
+    localStorage.setItem('job_board_apps', JSON.stringify(applications));
 
-    document.getElementById('app-msg').innerText = `Application submitted successfully! An automated notification email has been sent to ${email}.`;
+    document.getElementById('app-msg').innerText = `Application submitted successfully! Confirmation sent to ${email}.`;
     document.getElementById('apply-form').reset();
 }
 
@@ -220,11 +198,12 @@ function createNewJob(e) {
     };
 
     jobs.push(newJob);
-    localStorage.setItem('job_board_jobs_v2', JSON.stringify(jobs));
+    localStorage.setItem('job_board_jobs', JSON.stringify(jobs));
 
     document.getElementById('post-msg').innerText = "Job Posted Successfully!";
     document.getElementById('post-job-form').reset();
 }
 
-// Initial Call
+// Initial Calls
+updateAuthUI();
 renderFeaturedJobs();
