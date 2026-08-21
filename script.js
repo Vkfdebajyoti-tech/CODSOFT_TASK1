@@ -22,11 +22,68 @@ let defaultJobs = [
         location: "Hybrid",
         salary: "$90,000 / year",
         desc: "Handle both frontend UI and backend API integrations efficiently."
+    },
+    {
+        id: 4,
+        title: "Data Analyst",
+        company: "DataWiz Inc.",
+        location: "Bengaluru, India",
+        salary: "₹6,00,000 - ₹9,00,000 / year",
+        desc: "Analyze complex datasets and build dashboards using Python, SQL, and Tableau."
+    },
+    {
+        id: 5,
+        title: "Backend Developer (Node.js)",
+        company: "CloudSync",
+        location: "Remote",
+        salary: "$80,000 - $100,000 / year",
+        desc: "Design and implement scalable backend APIs and microservices using Node.js and MongoDB."
+    },
+    {
+        id: 6,
+        title: "Machine Learning Engineer",
+        company: "AI Dynamics",
+        location: "Hyderabad, India",
+        salary: "₹12,00,000 - ₹15,00,000 / year",
+        desc: "Develop and deploy machine learning models for predictive analytics and NLP tasks."
+    },
+    {
+        id: 7,
+        title: "DevOps Engineer",
+        company: "SecureNet",
+        location: "Mumbai, India",
+        salary: "₹9,00,000 - ₹12,00,000 / year",
+        desc: "Manage cloud infrastructure, CI/CD pipelines, and ensure system reliability and security."
+    },
+    {
+        id: 8,
+        title: "Mobile App Developer",
+        company: "AppMakers",
+        location: "Pune, India",
+        salary: "₹7,00,000 - ₹10,00,000 / year",
+        desc: "Build cross-platform mobile applications using Flutter and Dart."
+    },
+    {
+        id: 9,
+        title: "Product Manager",
+        company: "Visionary Tech",
+        location: "Remote",
+        salary: "$100,000 - $120,000 / year",
+        desc: "Lead product strategy, define roadmaps, and collaborate with engineering teams."
+    },
+    {
+        id: 10,
+        title: "React Native Developer",
+        company: "NextGen Apps",
+        location: "Noida, India",
+        salary: "₹6,50,000 - ₹8,50,000 / year",
+        desc: "Develop native-like mobile applications using React Native and Redux."
     }
 ];
 
-let jobs = JSON.parse(localStorage.getItem('job_board_jobs')) || defaultJobs;
-let applications = JSON.parse(localStorage.getItem('job_board_apps')) || [];
+// Changed localstorage key to load the new 10 jobs fresh
+let jobs = JSON.parse(localStorage.getItem('job_board_jobs_v2')) || defaultJobs;
+let applications = JSON.parse(localStorage.getItem('job_board_apps_v2')) || [];
 let selectedJobId = null;
 
 function showPage(pageId) {
@@ -41,7 +98,8 @@ function showPage(pageId) {
 function renderFeaturedJobs() {
     let container = document.getElementById('featured-jobs');
     container.innerHTML = '';
-    jobs.slice(0, 3).forEach(job => {
+    // Shows top 6 jobs on Home Page
+    jobs.slice(0, 6).forEach(job => {
         container.appendChild(createJobCard(job));
     });
 }
@@ -49,6 +107,7 @@ function renderFeaturedJobs() {
 function renderAllJobs() {
     let container = document.getElementById('all-jobs');
     container.innerHTML = '';
+    // Shows all 10 jobs on Jobs Page
     jobs.forEach(job => {
         container.appendChild(createJobCard(job));
     });
@@ -122,7 +181,7 @@ function submitApplication(e) {
     };
 
     applications.push(app);
-    localStorage.setItem('job_board_apps', JSON.stringify(applications));
+    localStorage.setItem('job_board_apps_v2', JSON.stringify(applications));
 
     document.getElementById('app-msg').innerText = `Application submitted successfully! An automated notification email has been sent to ${email}.`;
     document.getElementById('apply-form').reset();
@@ -161,7 +220,7 @@ function createNewJob(e) {
     };
 
     jobs.push(newJob);
-    localStorage.setItem('job_board_jobs', JSON.stringify(jobs));
+    localStorage.setItem('job_board_jobs_v2', JSON.stringify(jobs));
 
     document.getElementById('post-msg').innerText = "Job Posted Successfully!";
     document.getElementById('post-job-form').reset();
